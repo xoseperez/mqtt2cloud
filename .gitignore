@@ -1,0 +1,5 @@
+*.pyo
+*.pyc
+mqtt2cloud.yaml
+var/log/*
+var/run/*

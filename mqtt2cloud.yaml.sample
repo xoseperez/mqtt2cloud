@@ -1,0 +1,33 @@
+daemon:
+    pidfile: /tmp/mqtt2cloud.pid
+    stderr: /tmp/mqtt2cloud.err
+    stdout: /tmp/mqtt2cloud.log
+    debug: True
+
+mqtt:
+    client_id: mqtt2cloud
+    host: localhost
+    port: 1883
+    keepalive: 60
+    clean_session: True
+    qos: 0
+    status_topic: /service/mqtt2cloud/status
+
+services:
+    my_cosm:
+        class: cosm
+        configuration:
+            api_key: AABBCC
+            timeout: 10
+    my_tempodb:
+        class: tempodb
+        configuration:
+            databases:
+                sensors:
+                    api_key: AABBCC
+                    api_secret: AABBCC
+
+topics:
+    /home/general/power: my_cosm:98259:test
+    /home/general/power: my_tempodb:sensors:power
+
