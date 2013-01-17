@@ -10,6 +10,9 @@ This daemon will subscribe to an MQTT broker and push values to different provid
 * python-mosquitto
 <pre>sudo apt-get install python-mosquitto</pre>
 
+* tempodb 
+<pre>pip install tempodb</pre>
+
 ## Install
 
 Just clone or extract the code in some folder. I'm not providing an setup.py file yet.
@@ -40,14 +43,18 @@ For every topic you want to push you have to specify a destination string. This 
 
 You can specify the same topic more than once or you can group all the services in one list:
 
+<pre>
 /raw/sensor/battery: cosm:45243:battery
 /raw/sensor/battery: tempodb:sensor:battery
+</pre>
 
 or
 
+<pre>
 /raw/sensor/battery: 
     - cosm:45243:battery
     - tempodb:sensor:battery
+</pre>
 
 ## Running it
 
