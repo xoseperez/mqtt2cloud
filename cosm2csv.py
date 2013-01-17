@@ -28,7 +28,7 @@ __license__ = 'GPL v3'
 import re
 import datetime
 
-from libs.Providers.Cosm import Cosm
+from libs.services.Cosm import Cosm
 import argparse
 
 if __name__ == "__main__":

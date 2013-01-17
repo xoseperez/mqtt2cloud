@@ -71,9 +71,13 @@ class Cosm(CloudService):
             cosm.add('2012-12-27T14:00:00+01:00', 270)
             cosm.send(94234, 1)
         """
-        url = self.base_url % (feed, datastream) + "/datapoints.json"
-        data = json.dumps({'datapoints' : self.datapoints})
-        return requests.post(url, data=data, headers=self.headers(), timeout=self.timeout)
+        try:
+            url = self.base_url % (feed, datastream) + "/datapoints.json"
+            data = json.dumps({'datapoints' : self.datapoints})
+            response = requests.post(url, data=data, headers=self.headers(), timeout=self.timeout)
+            return response.status_code == 200
+        except:
+            return False
 
     def get(self, feed, datastream, start, end, step=360):
         """
@@ -87,9 +91,9 @@ class Cosm(CloudService):
 
         while ts_start < end:
             ts_end = min(ts_start + step, end)
-            data = "limit=1000&interval=0&start=%s&end=%s" % (ts_start.isoformat(), ts_end.isoformat())
-            response = requests.get( url + "?c=" + str(counter), data=data, headers=self.headers(), timeout=self.timeout)
-            response = json.loads(response)
+            data = {'limit': 1000, 'interval': 0, 'start': ts_start.isoformat(), 'end': ts_end.isoformat(), 'c': counter}
+            response = requests.get(url, params=data, headers=self.headers(), timeout=self.timeout)
+            response = json.loads(response.text)
             if 'datapoints' in response:
                 for datapoint in  response['datapoints']:
                     yield [datapoint['at'], datapoint['value']]
@@ -101,6 +105,10 @@ class Cosm(CloudService):
         """
         Pushes a single value with current timestamp to the given feed/datastream
         """
-        url = self.base_url % (feed, datastream) + ".json"
-        data = json.dumps({'current_value' : value})
-        return requests.put(url, data=data, headers=self.headers(), timeout=self.timeout)
+        try:
+            url = self.base_url % (feed, datastream) + ".json"
+            data = json.dumps({'current_value' : value})
+            response = requests.put(url, data=data, headers=self.headers(), timeout=self.timeout)
+            return response.status_code == 200
+        except:
+            return False
