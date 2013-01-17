@@ -41,14 +41,13 @@ For every topic you want to push you have to specify a destination string. This 
 - feed / database
 - datastream / series
 
-You can specify the same topic more than once or you can group all the services in one list:
+If you only define one service per topic you can do it inline, otherwise list all the services:
 
 <pre>
 /raw/sensor/battery: cosm:45243:battery
-/raw/sensor/battery: tempodb:sensor:battery
 </pre>
 
-or
+and
 
 <pre>
 /raw/sensor/battery: 
