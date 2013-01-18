@@ -15,11 +15,11 @@ mqtt:
 
 tempodb:
     databases:
-        benavent:
+        home:
             api_key: AAA
             api_secret: BBB
     timeout: 5
 
 topics:
-    /home/general/power: general/power
+    /home/general/power: home/power
 
