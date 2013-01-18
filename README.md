@@ -1,6 +1,6 @@
 # mqtt2cloud
 
-This daemon will subscribe to an MQTT broker and push values to different providers whenever a message is recevied from certain topics.
+MQTT2Cloud is a set of python daemons that will subscribe to an MQTT broker and push values to different providers whenever a message is recevied from certain topics.
 
 ## Requirements
 
@@ -10,8 +10,11 @@ This daemon will subscribe to an MQTT broker and push values to different provid
 * python-mosquitto
 <pre>sudo apt-get install python-mosquitto</pre>
 
-* tempodb 
+* tempodb [if using TempoDB daemon]
 <pre>pip install tempodb</pre>
+
+* requests [tempodb installs this]
+<pre>pip install requests</pre>
 
 ## Install
 
@@ -19,7 +22,7 @@ Just clone or extract the code in some folder. I'm not providing an setup.py fil
 
 ## Configuration
 
-Rename or copy the mqtt2cloud.yaml.sample file to mqtt2cloud.yaml and edit it. The configuration is pretty straight forward:
+Rename or copy the config/mqtt2???.yaml.sample files to config/mqtt2???.yaml and edit them. The configuration is pretty straight forward:
 
 ### daemon
 
@@ -29,37 +32,31 @@ Just define the log file paths.
 
 These are standard Mosquitto parameters. The status topic is the topic to post messages when the daemon starts or stops.
 
-### services
+### cosm 
 
-List of cloud services. For every key you have to provide a class name (the same class name used when registering the CloudService class in the CloudServiceFactory) and the configuration parameters.
-The configuration parameters are the same as in the cloud service constructor.
+The API key and timeout value.
+
+### tempodb
+
+A set of databases, each with its api key and secret.
 
 ### topics
 
-For every topic you want to push you have to specify a destination string. This destination string has three parameters, using ':' as separator:
-- service key (see the services definition)
-- feed / database
-- datastream / series
-
-If you only define one service per topic you can do it inline, otherwise list all the services:
+For every topic you want to push you have to specify a destination string. This destination string has two parameters, using '/' as separator. 
+Depending on the cloud service you are using these parameters could be: feed/datastream for cosm.com or database/series from tempo-db.com.
+The tempo-db.com 'database' must have been defined in the tempodb/databases section of the configuration.
 
 <pre>
-/raw/sensor/battery: cosm:45243:battery
-</pre>
-
-and
-
-<pre>
-/raw/sensor/battery: 
-    - cosm:45243:battery
-    - tempodb:sensor:battery
+topics:
+    /raw/sensor/battery: 45243/battery
 </pre>
 
 ## Running it
 
-The util stays resident as a daemon. You can start it, stop it or restart it (to reload the configuration) by using:
+The utils stay resident as a daemons. You can start them, stop them or restart them (to reload the configuration) by using:
 
-<pre>python mqtt2cloud.py start|stop|restart</pre>
+<pre>python mqtt2cosm.py start|stop|restart</pre>
+<pre>python mqtt2tempodb.py start|stop|restart</pre>
 
 
 
