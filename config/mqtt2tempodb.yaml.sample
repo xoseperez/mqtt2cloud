@@ -1,0 +1,25 @@
+daemon:
+    pidfile: /tmp/mqtt2tempodb.pid
+    stderr: /tmp/mqtt2tempodb.err
+    stdout: /tmp/mqtt2tempodb.log
+    debug: True
+
+mqtt:
+    client_id: mqtt2tempodb
+    host: localhost
+    port: 1883
+    keepalive: 60
+    clean_session: True
+    qos: 0
+    status_topic: /service/mqtt2tempodb/status
+
+tempodb:
+    databases:
+        benavent:
+            api_key: AAA
+            api_secret: BBB
+    timeout: 5
+
+topics:
+    /home/general/power: general/power
+

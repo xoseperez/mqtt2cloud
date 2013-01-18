@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
+#   MQTT to Cloud
 #   Copyright (C) 2013 by Xose Pérez
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,6 +18,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__app__ = "MQTT to Cloud"
 __author__ = "Xose Pérez"
 __contact__ = "xose.perez@gmail.com"
 __copyright__ = "Copyright (C) 2013 Xose Pérez"

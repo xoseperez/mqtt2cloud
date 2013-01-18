@@ -1,5 +1,6 @@
 *.pyo
 *.pyc
-mqtt2cloud.yaml
+*.yaml
+!*.yaml.sample
 var/log/*
 var/run/*

@@ -22,26 +22,31 @@ __contact__ = "xose.perez@gmail.com"
 __copyright__ = "Copyright (C) 2013 Xose Pérez"
 __license__ = 'GPL v3'
 
-class CloudServiceFactory(object):
+from tempodb import Client, DataPoint
+from datetime import datetime
+from CloudService import CloudService
+
+class TempoDB(CloudService):
     """
-    Service factory, returns the appropriate service given the type
+    Tempo-db.com client
     """
 
-    services = {}
+    _databases = None
+    _timeout = 5
 
-    @staticmethod
-    def register(type, service):
+    def __init__(self, databases, timeout = None):
         """
-        Registers a new service class
+        Constructor, provide API Key and secrets for multiple databases
         """
-        CloudServiceFactory.services[type] = service
+        self._databases = databases
+        if timeout:
+            self._timeout = timeout
 
-    def __new__(self, type, configuration):
+    def push(self, database, series, value):
         """
-        Constructor, returns an instance of a service given type
+        Pushes a single value with current timestamp to the given database/series
         """
-        try:
-            return self.services[type](**configuration)
-        except:
-            return None
-
+        db =  self._databases[database]
+        client = Client(db['api_key'], db['api_secret'])
+        data = [DataPoint(datetime.now(), float(value))]
+        client.write_key(series, data)

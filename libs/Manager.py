@@ -19,7 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __app__ = "MQTT to Cloud"
-__version__ = "0.2"
+__version__ = "0.3"
 __author__ = "Xose Pérez"
 __contact__ = "xose.perez@gmail.com"
 __copyright__ = "Copyright (C) 2013 Xose Pérez"
@@ -30,27 +30,18 @@ import time
 from datetime import datetime
 import ctypes
 
-from libs.Daemon import Daemon
-from libs.Config import Config
-from libs.Mosquitto import Mosquitto
+from Daemon import Daemon
 
-from libs.CloudServices import CloudServiceFactory
-from libs.services.Cosm import Cosm
-from libs.services.Tempodb import TempoDB
-
-CloudServiceFactory.register('cosm', Cosm)
-CloudServiceFactory.register('tempodb', TempoDB)
-
-class MQTT2Cloud(Daemon):
+class Manager(Daemon):
     """
-    MQTT2Cloud daemon.
+    MQTT2Cloud manager.
     Glues the different components together
     """
 
     debug = True
     mqtt = None
+    service = None
 
-    services = {}
     topics = {}
 
     def log(self, message):
@@ -63,28 +54,14 @@ class MQTT2Cloud(Daemon):
             sys.stdout.write("[%s] %s\n" % (timestamp, message))
             sys.stdout.flush()
 
-    def load_services(self, services):
-        """
-        Instantiates and caches all objects for the different services
-        """
-        for code, data in services.iteritems():
-            self.services[code] = CloudServiceFactory(data['class'], data['configuration'])
-
     def load_topics(self, topics):
         """
-        Loads the mapping from MQTT topics to different cloud storage services
+        Loads the mappings from MQTT topics
         """
         self.topics = {}
-        for topic, rows in topics.iteritems():
-            if topic not in self.topics:
-                self.topics[topic] = []
-            if type(rows) is not list:
-                rows = [rows]
-            for row in rows:
-                code, feed, stream = row.split(':', 3)
-                if not self.services.has_key(code):
-                    raise Exception('Unknown service code: %s' % code)
-                self.topics[topic].append({'service': code, 'feed': feed, 'stream': stream})
+        for topic, data in topics.iteritems():
+            feed, stream = data.split('/', 2)
+            self.topics[topic] = {'feed': feed, 'stream': stream}
 
     def cleanup(self):
         """
@@ -133,62 +110,31 @@ class MQTT2Cloud(Daemon):
 
     def mqtt_on_message(self, obj, msg):
         """
-        Incoming message, publish to all defined services if there is a mapping match
+        Incoming message, publish to the defined service if there is a mapping match
         """
-        rows = self.topics.get(msg.topic, None)
-        try:
-            message = ctypes.string_at(msg.payload, msg.payloadlen)
-        except:
-            message = msg.payload
-        for row in rows:
-            self.log("[DEBUG] Message routed from %s to %s:%s:%s = %s" % (msg.topic, row['service'], row['feed'], row['stream'], message))
-            self.services[row['service']].push(row['feed'], row['stream'], message)
+        data = self.topics.get(msg.topic, None)
+        if data:
+            try:
+                message = ctypes.string_at(msg.payload, msg.payloadlen)
+            except:
+                message = msg.payload
+            self.log("[DEBUG] Message routed from %s to %s:%s = %s" % (msg.topic, data['feed'], data['stream'], message))
+            self.service.push(data['feed'], data['stream'], message)
 
     def run(self):
         """
         Entry point, initiates components and loops forever...
         """
         self.log("[INFO] Starting " + __app__ + " v" + __version__)
+        if not self.mqtt:
+            self.log("[ERROR] MQTT broker not defined")
+            sys.exit(2)
+        if not self.service:
+            self.log("[ERROR] Cloud service not defined")
+            sys.exit(2)
+
         self.mqtt_connect()
 
         while True:
             self.mqtt.loop()
-
-if __name__ == "__main__":
-
-    config = Config('mqtt2cloud.yaml')
-
-    manager = MQTT2Cloud(config.get('daemon', 'pidfile', '/tmp/mqtt2cloud.pid'))
-    manager.stdout = config.get('daemon', 'stdout', '/dev/null')
-    manager.stderr = config.get('daemon', 'stderr', '/dev/null')
-    manager.debug = config.get('daemon', 'debug', False)
-
-    mqtt = Mosquitto(config.get('mqtt', 'client_id'))
-    mqtt.host = config.get('mqtt', 'host')
-    mqtt.port = config.get('mqtt', 'port')
-    mqtt.keepalive = config.get('mqtt', 'keepalive')
-    mqtt.clean_session = config.get('mqtt', 'clean_session')
-    mqtt.qos = config.get('mqtt', 'qos')
-    mqtt.retain = config.get('mqtt', 'retain')
-    mqtt.status_topic = config.get('mqtt', 'status_topic')
-    mqtt.set_will = config.get('mqtt', 'set_will')
-    manager.mqtt = mqtt
-
-    manager.load_services(config.get('services', default=[]))
-    manager.load_topics(config.get('topics', default=[]))
-
-    if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            manager.start()
-        elif 'stop' == sys.argv[1]:
-            manager.stop()
-        elif 'restart' == sys.argv[1]:
-            manager.restart()
-        else:
-            print "Unknown command"
-            sys.exit(2)
-        sys.exit(0)
-    else:
-        print "usage: %s start|stop|restart" % sys.argv[0]
-        sys.exit(2)
 

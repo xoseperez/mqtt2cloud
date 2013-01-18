@@ -1,0 +1,22 @@
+daemon:
+    pidfile: /tmp/mqtt2cosm.pid
+    stderr: /tmp/mqtt2cosm.err
+    stdout: /tmp/mqtt2cosm.log
+    debug: True
+
+mqtt:
+    client_id: mqtt2cosm
+    host: localhost
+    port: 1883
+    keepalive: 60
+    clean_session: True
+    qos: 0
+    status_topic: /service/mqtt2cosm/status
+
+cosm:
+    api_key: AABBCC
+    timeout: 10
+
+topics:
+    /home/general/power: 98259/test
+
