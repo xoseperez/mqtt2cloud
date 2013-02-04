@@ -19,7 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __app__ = "MQTT to Cloud"
-__version__ = "0.3"
+__version__ = "0.3.1"
 __author__ = "Xose Pérez"
 __contact__ = "xose.perez@gmail.com"
 __copyright__ = "Copyright (C) 2013 Xose Pérez"
@@ -89,8 +89,8 @@ class Manager(Daemon):
             self.log("[INFO] Connected to MQTT broker")
             self.mqtt.send_connected()
             for topic, data in self.topics.iteritems():
-                self.log("[DEBUG] Subscribing to %s" % topic)
-                self.mqtt.subscribe(topic, 0)
+                rc, mid = self.mqtt.subscribe(topic, 0)
+                self.log("[INFO] Subscription to %s sent with MID %d" % (topic, mid))
         else:
             self.stop()
 
@@ -106,7 +106,7 @@ class Manager(Daemon):
         """
         Callback when succeeded subscription
         """
-        self.log("[INFO] Subscription with mid %s received." % mid)
+        self.log("[INFO] Subscription for MID %s confirmed." % mid)
 
     def mqtt_on_message(self, obj, msg):
         """
@@ -119,7 +119,10 @@ class Manager(Daemon):
             except:
                 message = msg.payload
             self.log("[DEBUG] Message routed from %s to %s:%s = %s" % (msg.topic, data['feed'], data['stream'], message))
-            self.service.push(data['feed'], data['stream'], message)
+            try:
+                self.service.push(data['feed'], data['stream'], message)
+            except Exception as e:
+                self.log("[ERROR] %s" % e)
 
     def run(self):
         """
