@@ -25,15 +25,25 @@ __license__ = 'GPL v3'
 import yaml
 
 class Config(object):
+    """
+    Simple YAML configuration parser
+    """
 
     config = None
 
     def __init__(self, filename):
+        """
+        Constructor, parses and stores the configuration
+        """
         handler = file(filename, 'r')
         self.config = yaml.load(handler)
         handler.close()
 
     def get(self, section, key=None, default=None):
+        """
+        Retrieves a given section/key combination,
+        if not existent it return a default value
+        """
         try:
             if key is None:
                 return self.config[section]

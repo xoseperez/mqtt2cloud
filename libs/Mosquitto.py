@@ -25,6 +25,9 @@ __license__ = 'GPL v3'
 from mosquitto import Mosquitto as _Mosquitto
 
 class Mosquitto(_Mosquitto):
+    """
+    Wrapper for the official Mosquitto client that allows injection and easy mocking
+    """
 
     client_id = 'xbee2mqtt'
     host = 'localhost'
@@ -37,14 +40,23 @@ class Mosquitto(_Mosquitto):
     set_will = False
 
     def connect(self):
+        """
+        Connects to the Mosquitto broker with the pre-configured parameters
+        """
         if self.set_will:
             self.will_set(self.status_topic, "0", self.qos, self.retain)
         _Mosquitto.connect(self, self.host, self.port, self.keepalive, self.clean_session)
 
     def publish(self, topic, value):
+        """
+        Publishes a value to a given topic, uses pre-loaded values for QoS and retain
+        """
         _Mosquitto.publish(self, topic, str(value), self.qos, self.retain)
 
     def send_connected(self):
+        """
+        Send connection notification
+        """
         self.publish(self.status_topic, "1")
 
 
