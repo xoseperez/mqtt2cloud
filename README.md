@@ -32,7 +32,7 @@ Just define the log file paths.
 
 These are standard Mosquitto parameters. The status topic is the topic to post messages when the daemon starts or stops.
 
-### cosm 
+### cosm, xively, sen.se
 
 The API key and timeout value.
 
@@ -43,7 +43,7 @@ A set of databases, each with its api key and secret.
 ### topics
 
 For every topic you want to push you have to specify a destination string. This destination string has two parameters, using '/' as separator. 
-Depending on the cloud service you are using these parameters could be: feed/datastream for cosm.com or database/series from tempo-db.com.
+Depending on the cloud service you are using these parameters could be: feed/datastream for xively.com, feed/(empty) for sen.se or database/series from tempo-db.com.
 The tempo-db.com 'database' must have been defined in the tempodb/databases section of the configuration.
 
 <pre>
