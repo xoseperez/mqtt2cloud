@@ -1,0 +1,22 @@
+daemon:
+    pidfile: /tmp/mqtt2thingspeak.pid
+    stderr: /tmp/mqtt2thingspeak.err
+    stdout: /tmp/mqtt2thingspeak.log
+    debug: True
+
+mqtt:
+    client_id: mqtt2thingspeak
+    host: localhost
+    port: 1883
+    keepalive: 60
+    clean_session: True
+    qos: 0
+    status_topic: /service/mqtt2thingspeak/status
+
+thingspeak:
+    channels:
+        2323: AAABBBCCC
+
+topics:
+    /home/general/power: 2323/energy
+

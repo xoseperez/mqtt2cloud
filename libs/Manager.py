@@ -140,4 +140,5 @@ class Manager(Daemon):
 
         while True:
             self.mqtt.loop()
+            self.service.loop()
 
