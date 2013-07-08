@@ -29,5 +29,5 @@ class CloudService(object):
     def push(self, feed, stream, value):
         pass
 
-    def loop():
+    def loop(self):
         pass

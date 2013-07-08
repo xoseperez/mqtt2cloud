@@ -50,11 +50,11 @@ class Thingspeak(CloudService):
         self.group_timeout = group_timeout
         self.request_timeout = request_timeout
 
-    def push(self, channel, field, value):
+    def push(self, channel_id, field, value):
         """
         Pushes a single value with current timestamp to the given feed/datastream
         """
-        channel = self.channels.get(channel)
+        channel = self.channels.get(int(channel_id))
         if channel == None:
             return False
 
@@ -82,6 +82,9 @@ class Thingspeak(CloudService):
         Actually sends the data
         """
         data['key'] = key
-        response = requests.post(self.api_url, data=data, timeout=self.request_timeout)
-        return response.status_code == 200
+        try:
+            response = requests.post(self.api_url, data=data, timeout=self.request_timeout)
+            return response.status_code == 200
+        except:
+            return False
 

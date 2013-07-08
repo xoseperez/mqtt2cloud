@@ -81,7 +81,7 @@ class Manager(Daemon):
         self.mqtt.on_subscribe = self.mqtt_on_subscribe
         self.mqtt.connect()
 
-    def mqtt_on_connect(self, obj, result_code):
+    def mqtt_on_connect(self, obj, userdata, result_code):
         """
         Callback when connection to the MQTT broker has succedeed or failed
         """
@@ -94,7 +94,7 @@ class Manager(Daemon):
         else:
             self.stop()
 
-    def mqtt_on_disconnect(self, obj, result_code):
+    def mqtt_on_disconnect(self, obj, userdata, result_code):
         """
         Callback when disconnecting from the MQTT broker
         """
@@ -102,13 +102,13 @@ class Manager(Daemon):
             time.sleep(3)
             self.mqtt_connect()
 
-    def mqtt_on_subscribe(self, obj, mid, qos_list):
+    def mqtt_on_subscribe(self, obj, userdata, mid, qos_list):
         """
         Callback when succeeded subscription
         """
         self.log("[INFO] Subscription for MID %s confirmed." % mid)
 
-    def mqtt_on_message(self, obj, msg):
+    def mqtt_on_message(self, obj, userdata, msg):
         """
         Incoming message, publish to the defined service if there is a mapping match
         """

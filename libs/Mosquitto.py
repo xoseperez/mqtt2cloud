@@ -22,6 +22,7 @@ __contact__ = "xose.perez@gmail.com"
 __copyright__ = "Copyright (C) 2012 Xose Pérez"
 __license__ = 'GPL v3'
 
+import sys
 from mosquitto import Mosquitto as _Mosquitto
 
 class Mosquitto(_Mosquitto):
@@ -45,7 +46,7 @@ class Mosquitto(_Mosquitto):
         """
         if self.set_will:
             self.will_set(self.status_topic, "0", self.qos, self.retain)
-        _Mosquitto.connect(self, self.host, self.port, self.keepalive, self.clean_session)
+        _Mosquitto.connect(self, self.host, self.port, self.keepalive)
 
     def publish(self, topic, value):
         """
