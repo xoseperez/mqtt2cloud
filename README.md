@@ -2,6 +2,8 @@
 
 MQTT2Cloud is a set of python daemons that will subscribe to an MQTT broker and push values to different providers whenever a message is recevied from certain topics.
 
+You can read more about this in my post about [Storing and publishing sensor data]( http://tinkerman.eldiariblau.net/storing-and-publishing-sensor-data/ "Storing and publishing sensor data").
+
 ## Requirements
 
 * python-yaml
