@@ -4,3 +4,4 @@
 !*.yaml.sample
 var/log/*
 var/run/*
+!.empty
