@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
-#   MQTT to Cloud
 #   Copyright (C) 2013 by Xose Pérez
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -18,18 +17,40 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__app__ = "MQTT to Cloud"
 __author__ = "Xose Pérez"
 __contact__ = "xose.perez@gmail.com"
-__copyright__ = "Copyright (C) 2013 Xose Pérez"
+__copyright__ = "Copyright (C) 2016 Xose Pérez"
 __license__ = 'GPL v3'
 
-class CloudService(object):
+import requests
+import json
+import datetime
+from CloudService import CloudService
+from thethingsio.theThingsAPI import TheThingsAPI
 
-    last_response = None
+class TheThingsIO(CloudService):
+    """
+    theThings.io client
+    """
 
-    def push(self, feed, stream, value):
-        pass
+    things = None
 
-    def loop(self):
-        pass
+    def __init__(self, things):
+        """
+        Constructor, provide API Key
+        """
+        self.things = things
+
+    def push(self, thing, variable, value):
+        """
+        Pushes a single value with current timestamp to the given thing/variable
+        """
+        try:
+            t = self.things.get(thing)
+            api = TheThingsAPI(t['token'])
+            api.addVar(variable, value)
+            self.last_response = api.write()
+            return self.last_response == 201
+        except Exception as e:
+            self.last_response = e
+            return False

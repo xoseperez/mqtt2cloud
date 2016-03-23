@@ -46,7 +46,13 @@ class TempoDB(CloudService):
         """
         Pushes a single value with current timestamp to the given database/series
         """
-        db =  self._databases[database]
-        client = Client(db['api_key'], db['api_secret'])
-        data = [DataPoint(datetime.now(), float(value))]
-        client.write_key(series, data)
+        try:
+            db =  self._databases[database]
+            client = Client(db['api_key'], db['api_secret'])
+            data = [DataPoint(datetime.now(), float(value))]
+            client.write_key(series, data)
+            self.last_response = 'OK'
+            return True
+        except Exception as e:
+            self.last_response = e
+            return False

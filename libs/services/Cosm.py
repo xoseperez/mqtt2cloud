@@ -109,6 +109,8 @@ class Cosm(CloudService):
             url = self.base_url % (feed, datastream) + ".json"
             data = json.dumps({'current_value' : value})
             response = requests.put(url, data=data, headers=self.headers(), timeout=self.timeout)
+            self.last_response = response.status_code
             return response.status_code == 200
-        except:
+        except Exception as e:
+            self.last_response = e
             return False

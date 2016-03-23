@@ -118,11 +118,14 @@ class Manager(Daemon):
                 message = ctypes.string_at(msg.payload, msg.payloadlen)
             except:
                 message = msg.payload
-            self.log("[DEBUG] Message routed from %s to %s:%s = %s" % (msg.topic, data['feed'], data['stream'], message))
             try:
-                self.service.push(data['feed'], data['stream'], message)
+                status = self.service.push(data['feed'], data['stream'], message)
+                response = self.service.last_response
+                status = 'DEBUG' if status else 'ERROR'
             except Exception as e:
-                self.log("[ERROR] %s" % e)
+                response = e
+                status = 'ERROR'
+            self.log("[%s] Message routed from %s to %s:%s = %s (%s)" % (status, msg.topic, data['feed'], data['stream'], message, response))
 
     def run(self):
         """
@@ -141,4 +144,3 @@ class Manager(Daemon):
         while True:
             self.mqtt.loop()
             self.service.loop()
-

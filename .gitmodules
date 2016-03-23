@@ -1,0 +1,3 @@
+[submodule "libs/services/thethingsio"]
+	path = libs/services/thethingsio
+	url = https://github.com/theThings/thethings.iO-python-library.git

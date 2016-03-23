@@ -1,0 +1,22 @@
+daemon:
+    pidfile: /tmp/mqtt2thethingsio.pid
+    stderr: /tmp/mqtt2thethingsio.err
+    stdout: /tmp/mqtt2thethingsio.log
+    debug: True
+
+mqtt:
+    client_id: mqtt2thethingsio
+    host: localhost
+    port: 1883
+    keepalive: 60
+    clean_session: True
+    qos: 0
+    status_topic: /service/mqtt2thethingsio/status
+
+thethingsio:
+    things:
+        home:
+            token: AABBCC
+
+topics:
+    /home/general/power: home/power

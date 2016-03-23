@@ -58,8 +58,8 @@ class Sense(CloudService):
         """
         data = { 'feed_id': feed, 'value': value }
         response = requests.post(self.base_url, data=json.dumps(data), headers=self.headers(), timeout=self.timeout)
+        self.last_response = response.status_code
         try:
             return response.status_code == 200
         except:
             return False
-
