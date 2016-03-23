@@ -85,7 +85,7 @@ class Thingspeak(CloudService):
         try:
             response = requests.post(self.api_url, data=data, timeout=self.request_timeout)
             self.last_response = response.status_code
-            return response.status_code == 200
+            return self.last_response == 200
         except Exception as e:
             self.last_response = e
             return False

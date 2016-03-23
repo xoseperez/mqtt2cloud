@@ -42,6 +42,10 @@ The API key and timeout value.
 
 A set of databases, each with its api key and secret.
 
+### thethings.io
+
+A set of things, each with its token.
+
 ### topics
 
 For every topic you want to push you have to specify a destination string. This destination string has two parameters, using '/' as separator. 

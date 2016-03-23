@@ -119,9 +119,8 @@ class Manager(Daemon):
             except:
                 message = msg.payload
             try:
-                status = self.service.push(data['feed'], data['stream'], message)
+                status = 'DEBUG' if self.service.push(data['feed'], data['stream'], message) else 'ERROR'
                 response = self.service.last_response
-                status = 'DEBUG' if status else 'ERROR'
             except Exception as e:
                 response = e
                 status = 'ERROR'

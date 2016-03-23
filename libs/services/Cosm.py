@@ -110,7 +110,7 @@ class Cosm(CloudService):
             data = json.dumps({'current_value' : value})
             response = requests.put(url, data=data, headers=self.headers(), timeout=self.timeout)
             self.last_response = response.status_code
-            return response.status_code == 200
+            return self.last_response == 200
         except Exception as e:
             self.last_response = e
             return False

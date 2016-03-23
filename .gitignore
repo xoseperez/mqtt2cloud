@@ -1,6 +1,7 @@
 *.pyo
 *.pyc
 *.yaml
+.venv
 !*.yaml.sample
 var/log/*
 var/run/*
