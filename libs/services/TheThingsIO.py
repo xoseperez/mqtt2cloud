@@ -22,11 +22,8 @@ __contact__ = "xose.perez@gmail.com"
 __copyright__ = "Copyright (C) 2016 Xose Pérez"
 __license__ = 'GPL v3'
 
-import requests
-import json
-import datetime
 from CloudService import CloudService
-from thethingsio.theThingsAPI import TheThingsAPI
+from thethingsio.thethingsAPI import thethingsiO
 
 class TheThingsIO(CloudService):
     """
@@ -47,7 +44,8 @@ class TheThingsIO(CloudService):
         """
         try:
             t = self.things.get(thing)
-            api = TheThingsAPI(t['token'])
+            api = thethingsiO(t['token'])
+            api.clear()
             api.addVar(variable, value)
             self.last_response = api.write()
             return self.last_response == 201
